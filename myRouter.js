@@ -1,6 +1,7 @@
 const express = require('express');
 const myRouter = express.Router();
 const { User } = require('./models/User');
+const medsController = require('./controllers/medsController.js');
 // const signupController = require('../controllers/signupController');
 // const loginController = require('../controllers/loginController');
 // const cookieController = require('../controllers/cookieController');
@@ -27,6 +28,13 @@ myRouter.post('/register', async (req, res) => {
 
   res.json(registerRes);
 });
+
+myRouter.get('/meds-lookup', medsController.medsLookup, (req, res) => {
+  const { meds } = res.locals;
+  res.json(meds);
+});
+
+// router.post( )
 // router.post(
 //   '/login',
 //   loginController.loginUser,
