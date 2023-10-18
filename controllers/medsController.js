@@ -2,18 +2,21 @@ const Axios = require('axios');
 
 const medsBase = 'https://clinicaltables.nlm.nih.gov';
 
+const { EntryInfo } = require('../models/User');
+
 const medsController = {};
 
-medsController.medsLookup = async (req, res, next) => {
-  console.log('reached medsLookup middlewear');
-  const { medsName } = req.body;
-  // console.log('medsName==>', req.body);
-  const url =
-    medsBase + `/api/rxterms/v3/search?terms=${medsName}&ef=STRENGTHS_AND_FORMS`;
+medsController.createEntry = async (req, res, next) => {
+  const entryInfo = req.body;
+  // console.log('entryInfo==>', entryInfo);
+  //res.json('this is a test');
+  // const url =
+  //   medsBase + `/api/rxterms/v3/search?terms=${medName}&ef=STRENGTHS_AND_FORMS`;
 
   try {
-    const { data } = await Axios.get(url);
-    res.locals.meds = data;
+    const entry = await new EntryInfo(entryInfo).save();
+    console.log('new entry==>', entry);
+    res.locals = entry;
     return next();
   } catch (error) {
     res.status(500).send(error);

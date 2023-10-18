@@ -1,5 +1,6 @@
 const express = require('express');
 const myRouter = express.Router();
+
 const { User } = require('./models/User');
 const medsController = require('./controllers/medsController.js');
 // const signupController = require('../controllers/signupController');
@@ -29,9 +30,16 @@ myRouter.post('/register', async (req, res) => {
   res.json(registerRes);
 });
 
-myRouter.get('/meds-lookup', medsController.medsLookup, (req, res) => {
-  const { meds } = res.locals;
-  res.json(meds);
+// myRouter.post('/meds-lookup', medsController.medsLookup, (req, res) => {
+//   const { med } = res.locals;
+//   console.log('med==>', med);
+//   res.json(med);
+// });
+
+myRouter.post('/create-entry', medsController.createEntry, (req, res) => {
+  const data = res.locals;
+  //console.log('med==>', med);
+  res.json(data);
 });
 
 // router.post( )

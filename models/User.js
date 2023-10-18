@@ -147,9 +147,15 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-
 });
 
+const entryInfoSchema = new Schema({
+  medication: {
+    type: String,
+    required: true,
+  },
+  slots: [Schema.Types.Mixed],
+});
 // const bookingSchema = new Schema({
 //   clientUsername: {
 //     type: String,
@@ -202,11 +208,11 @@ const userSchema = new Schema({
 // });
 
 const User = mongoose.model('user', userSchema);
-// const Booking = mongoose.model('booking', bookingSchema);
+const EntryInfo = mongoose.model('entryInfo', entryInfoSchema);
 // const Location = mongoose.model('locations', locationSchema);
 
 module.exports = {
   // Location,
   User,
-  // Booking,
+  EntryInfo,
 };
