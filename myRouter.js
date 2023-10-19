@@ -3,6 +3,7 @@ const myRouter = express.Router();
 
 const { User } = require('./models/User');
 const medsController = require('./controllers/medsController.js');
+const userController = require('./controllers/userController');
 // const signupController = require('../controllers/signupController');
 // const loginController = require('../controllers/loginController');
 // const cookieController = require('../controllers/cookieController');
@@ -40,6 +41,12 @@ myRouter.post('/create-entry', medsController.createEntry, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);
   res.json(data);
+});
+
+myRouter.post('/register', userController.register, (req, res) => {
+  const user = res.locals;
+  //console.log('med==>', med);
+  res.json(user);
 });
 
 // router.post( )
