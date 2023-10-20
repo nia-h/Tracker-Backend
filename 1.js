@@ -9,8 +9,3 @@
   },
   [['Tranexamic acid (Injectable)'], ['Tranexamic acid (Oral Pill)']],
 ];
-
-const entryInfoSchema = new Schema({
-  medication: String,
-  slots: [Schema.Types.Mixed],
-});

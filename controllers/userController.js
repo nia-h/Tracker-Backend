@@ -1,4 +1,4 @@
-const { User } = require('../models/User');
+const { User } = require('../models/models');
 // const Post = require("../models/Post")
 // const Follow = require("../models/Follow")
 const jwt = require('jsonwebtoken');
@@ -9,11 +9,15 @@ const tokenLasts = '365d';
 const bcrypt = require('bcrypt');
 
 const userController = {};
-userController.register = async (req, res) => {
-  const { email, password } = req.body;
+
+// userController.test = a;
+
+userController.register = async (req, res, next) => {
+  console.log('reached register controller');
+
+  let { email, password } = req.body;
   let salt = bcrypt.genSaltSync(10);
   password = bcrypt.hashSync(password, salt);
-
   try {
     const user = await new User({ email, password }).save();
 
@@ -24,24 +28,31 @@ userController.register = async (req, res) => {
   }
 };
 
-// exports.apiGetHomeFeed = async function (req, res) {
-//   try {
-//     let posts = await Post.getFeed(req.apiUser._id)
-//     res.json(posts)
-//   } catch (e) {
-//     res.status(500).send("Error")
-//   }
-// }
+userController.login = async (req, res, next) => {
+  const { email, password } = req.body;
+  console.log('email==>', email);
 
-// exports.ifUserExists = function (req, res, next) {
-//   User.findByUsername(req.params.username)
-//     .then(function (userDocument) {
-//       req.profileUser = userDocument
-//       next()
-//     })
-//     .catch(function (e) {
-//       res.json(false)
-//     })
+  try {
+    const user = await User.findOne({ email });
+    console.log('retrieved user==>', user);
+    if (user && bcrypt.compareSync(password, user.password)) {
+      res.locals = {
+        token: jwt.sign(
+          { _id: user._id, email: user.email },
+          process.env.JWTSECRET,
+          { expiresIn: tokenLasts }
+        ),
+        email: user.email,
+      };
+      return next();
+    } else {
+      console.log('password issue');
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
 // }
 
 // exports.profileBasicData = function (req, res) {

@@ -1,7 +1,7 @@
 const express = require('express');
 const myRouter = express.Router();
 
-const { User } = require('./models/User');
+const { User } = require('./models/models');
 const medsController = require('./controllers/medsController.js');
 const userController = require('./controllers/userController');
 // const signupController = require('../controllers/signupController');
@@ -25,12 +25,6 @@ myRouter.get('/', (req, res) =>
     )
 );
 
-myRouter.post('/register', async (req, res) => {
-  const registerRes = await new User(req.body).save();
-
-  res.json(registerRes);
-});
-
 // myRouter.post('/meds-lookup', medsController.medsLookup, (req, res) => {
 //   const { med } = res.locals;
 //   console.log('med==>', med);
@@ -44,9 +38,27 @@ myRouter.post('/create-entry', medsController.createEntry, (req, res) => {
 });
 
 myRouter.post('/register', userController.register, (req, res) => {
+  const data = res.locals;
+  //console.log('med==>', med);
+  res.json(data);
+});
+
+// myRouter.post('/login', userController.login, (req, res) => {
+//   const user = res.locals;
+//   //console.log('med==>', med);
+//   res.json(user);
+// });
+
+myRouter.get('/login', userController.login, (req, res) => {
   const user = res.locals;
   //console.log('med==>', med);
   res.json(user);
+});
+
+myRouter.get('/:email/medlist', medsController.getMedListByEmail, (req, res) => {
+  const data = res.locals;
+  //console.log('med==>', med);
+  res.json(data);
 });
 
 // router.post( )
