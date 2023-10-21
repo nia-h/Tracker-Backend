@@ -14,18 +14,35 @@ const userSchema = new Schema({
   },
 });
 
-const medEntrySchema = new Schema({
+const medScheduleSchema = new Schema({
   userId: {
     type: String,
-    required: true,
+    // required: true,
   },
 
-  medication: {
-    type: String,
-    required: true,
-  },
-  slots: [Schema.Types.Mixed],
+  schedule: Schema.Types.Mixed,
+  // medication: {
+  //   type: String,
+  //   required: true,
+  // },
+  // slots: [String],
 });
+
+// const dailyMedListSchema = new Schema({
+//   date: Date,
+
+//   userId: {
+//     type: String,
+//     required: true,
+//   },
+
+//   medication: {
+//     type: String,
+//     required: true,
+//   },
+//   slots: [Schema.Types.Mixed],
+// });
+
 // const bookingSchema = new Schema({
 //   clientUsername: {
 //     type: String,
@@ -78,11 +95,12 @@ const medEntrySchema = new Schema({
 // });
 
 const User = mongoose.model('user', userSchema);
-const MedEntry = mongoose.model('medEntry', medEntrySchema);
+const MedSchedule = mongoose.model('medSchedule', medScheduleSchema);
 // const Location = mongoose.model('locations', locationSchema);
 
 module.exports = {
   // Location,
   User,
-  MedEntry,
+  MedSchedule,
+  // DailyMedList,
 };

@@ -4,6 +4,7 @@ const myRouter = express.Router();
 const { User } = require('./models/models');
 const medsController = require('./controllers/medsController.js');
 const userController = require('./controllers/userController');
+
 // const signupController = require('../controllers/signupController');
 // const loginController = require('../controllers/loginController');
 // const cookieController = require('../controllers/cookieController');
@@ -31,7 +32,7 @@ myRouter.get('/', (req, res) =>
 //   res.json(med);
 // });
 
-myRouter.post('/create-entry', medsController.createEntry, (req, res) => {
+myRouter.post('/addToSchedule', medsController.addToSchedule, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);
   res.json(data);

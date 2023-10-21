@@ -2,23 +2,47 @@ const Axios = require('axios');
 
 const { MedEntry } = require('../models/models');
 
-const { User } = require('../models/models');
+const { User, MedSchedule } = require('../models/models');
 
 const medsController = {};
 
-medsController.createEntry = async (req, res, next) => {
-  const medEntry = req.body;
-  console.log('MedEntry==>', medEntry);
-  //res.json('this is a test');
-  // const url =
-  //   medsBase + `/api/rxterms/v3/search?terms=${medName}&ef=STRENGTHS_AND_FORMS`;
+medsController.addToSchedule = async (req, res, next) => {
+  const data = req.body;
+  console.log('data==>', data);
+  //console.dir(data);
+  //res.json('this is a test')
 
   try {
-    const entry = await new MedEntry(medEntry).save();
-    console.log('new entry==>', entry);
-    res.locals = entry;
+    //first check if one exists
+    let medSchedule = await MedSchedule.findOneAndUpdate(
+      { userId: data.userId },
+      { $push: { schedule: { $each: data.schedule } } },
+      { new: true }
+    );
+    console.log('should be null==>', medSchedule);
+    if (!medSchedule) {
+      medSchedule = await new MedSchedule(data).save();
+    }
+
+    console.log(medSchedule);
+
+    // if (medScheduleDoc) {
+    //   medScheduleDoc.schedule.push(data.schedule);
+
+    //   // Update document
+    //   await medScheduleDoc.save();
+
+    // console.log('medScheduleDoc after push==>', medScheduleDoc);
+    // } else {
+    //   medScheduleDoc = await new MedSchedule(data).save();
+    // }
+    // medScheduleDoc = await MedSchedule.findOne({ userId: data.userId });
+    // console.log('medScheduleDoc after push==>', medScheduleDoc);
+    res.locals = 'testing';
     return next();
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 medsController.getMedListByEmail = async (req, res, next) => {
