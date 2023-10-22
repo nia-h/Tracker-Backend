@@ -43,6 +43,7 @@ userController.login = async (req, res, next) => {
           { expiresIn: tokenLasts }
         ),
         email: user.email,
+        userId: user._id,
       };
       return next();
     } else {
@@ -52,16 +53,5 @@ userController.login = async (req, res, next) => {
     next(e);
   }
 };
-
-// }
-
-// exports.profileBasicData = function (req, res) {
-//   res.json({
-//     profileUsername: req.profileUser.username,
-//     profileAvatar: req.profileUser.avatar,
-//     isFollowing: req.isFollowing,
-//     counts: { postCount: req.postCount, followerCount: req.followerCount, followingCount: req.followingCount }
-//   })
-// }
 
 module.exports = userController;

@@ -6,6 +6,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
 
   password: {
@@ -17,90 +18,41 @@ const userSchema = new Schema({
 const medScheduleSchema = new Schema({
   userId: {
     type: String,
-    // required: true,
+    required: true,
+    unique: true,
   },
 
-  schedule: Schema.Types.Mixed,
-  // medication: {
-  //   type: String,
-  //   required: true,
-  // },
-  // slots: [String],
+  schedule: [
+    { med: String, time: String, taken: { type: Boolean, default: false } },
+  ],
 });
 
-// const dailyMedListSchema = new Schema({
-//   date: Date,
+const dailyMedListSchema = new Schema({
+  //new Date(1697899238992).getDate()
+  date: {
+    type: Date,
+    // `Date.now()` returns the current unix timestamp as a number
+    default: Date.now,
+  },
+  userId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 
-//   userId: {
-//     type: String,
-//     required: true,
-//   },
-
-//   medication: {
-//     type: String,
-//     required: true,
-//   },
-//   slots: [Schema.Types.Mixed],
-// });
-
-// const bookingSchema = new Schema({
-//   clientUsername: {
-//     type: String,
-//     required: true,
-//   },
-//   hostUsername: {
-//     type: String,
-//     required: true,
-//   },
-//   startDate: {
-//     type: Date,
-//     required: true,
-//   },
-//   endDate: {
-//     type: Date,
-//     required: true,
-//   },
-
-//   location: {
-//     type: String,
-//     required: true,
-//   },
-// });
-
-// const locationSchema = new Schema({
-//   hostName: {
-//     type: String,
-//     required: true,
-//   },
-//   address: {
-//     type: String,
-//     required: true,
-//   },
-//   price: {
-//     type: Number,
-//     required: true,
-//   },
-//   options: {
-//     type: String,
-//     required: true,
-//   },
-//   size: {
-//     type: Number,
-//     required: true,
-//   },
-//   coordinates: {
-//     lat: Number,
-//     lng: Number,
-//   },
-// });
+  schedule: [
+    { med: String, time: String, taken: { type: Boolean, default: false } },
+  ],
+});
 
 const User = mongoose.model('user', userSchema);
 const MedSchedule = mongoose.model('medSchedule', medScheduleSchema);
+const DailyMedList = mongoose.model('dailymedList', dailyMedListSchema);
+
 // const Location = mongoose.model('locations', locationSchema);
 
 module.exports = {
-  // Location,
   User,
   MedSchedule,
-  // DailyMedList,
+  DailyMedList,
 };
