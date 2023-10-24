@@ -30,6 +30,11 @@ myRouter.post('/login', userController.login, (req, res) => {
   res.json(user);
 });
 
+myRouter.post('/checkItem', medsController.checkItem, (req, res) => {
+  const data = res.locals;
+  //console.log('med==>', med);
+  res.json(data);
+});
 myRouter.get('/:userId/medlist', medsController.getMedListByUserId, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);

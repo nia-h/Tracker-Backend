@@ -27,6 +27,27 @@ medsController.addToSchedule = async (req, res, next) => {
   }
 };
 
+medsController.checkItem = async (req, res, next) => {
+  const { userId, itemId } = req.body;
+  console.log('userId==>', userId);
+  console.log('itemId==>', itemId);
+  try {
+    let medSchedule = await MedSchedule.findOneAndUpdate(
+      { userId: userId, 'schedule._id': itemId },
+      { $set: { 'schedule.$.taken': true } },
+      { new: true }
+    );
+    if (!medSchedule) {
+      throw Error('schedule not found!');
+    }
+
+    res.locals = medSchedule;
+    return next();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 medsController.getMedListByUserId = async (req, res, next) => {
   const userId = req.params.userId;
   console.log('userId  from param==>', userId);
