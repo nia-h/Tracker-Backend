@@ -28,13 +28,15 @@ medsController.addToSchedule = async (req, res, next) => {
 };
 
 medsController.checkItem = async (req, res, next) => {
-  const { userId, itemId } = req.body;
+  const { userId, itemId, medList } = req.body;
   console.log('userId==>', userId);
   console.log('itemId==>', itemId);
   try {
     let medSchedule = await MedSchedule.findOneAndUpdate(
       { userId: userId, 'schedule._id': itemId },
-      { $set: { 'schedule.$.taken': true } },
+      { $set: { schedule: medList } },
+      // [{ $set: { 'schedule.$.taken': { $eq: [false, 'schedule.$.taken'] } } }],
+
       { new: true }
     );
     if (!medSchedule) {
