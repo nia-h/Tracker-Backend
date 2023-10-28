@@ -13,8 +13,6 @@ const userController = {};
 // userController.test = a;
 
 userController.register = async (req, res, next) => {
-  console.log('reached register controller');
-
   let { email, password } = req.body;
   let salt = bcrypt.genSaltSync(10);
   password = bcrypt.hashSync(password, salt);
@@ -23,8 +21,8 @@ userController.register = async (req, res, next) => {
 
     res.locals = user;
     return next();
-  } catch (error) {
-    res.status(500).send(error);
+  } catch (e) {
+    console.log('e');
   }
 };
 
@@ -34,7 +32,6 @@ userController.login = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ email });
-    console.log('retrieved user==>', user);
     if (user && bcrypt.compareSync(password, user.password)) {
       res.locals = {
         token: jwt.sign(
@@ -44,13 +41,17 @@ userController.login = async (req, res, next) => {
         ),
         email: user.email,
         userId: user._id,
+        profile: user,
       };
       return next();
     } else {
-      console.log('password issue');
+      return next({
+        log: 'userController.login ERROR',
+        message: 'userController.login ERROR: invalid email/password',
+      });
     }
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };
 

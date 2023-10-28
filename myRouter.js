@@ -28,6 +28,7 @@ myRouter.post('/login', userController.login, (req, res) => {
   const user = res.locals;
   //console.log('med==>', med);
   res.json(user);
+  // res.render('view');
 });
 
 myRouter.post('/checkItem', medsController.checkItem, (req, res) => {
@@ -35,12 +36,17 @@ myRouter.post('/checkItem', medsController.checkItem, (req, res) => {
   //console.log('med==>', med);
   res.json(data);
 });
-myRouter.get('/:userId/medlist', medsController.getMedListByUserId, (req, res) => {
+myRouter.get('/:userId/schedule', medsController.getScheduleByUserId, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);
   res.json(data);
 });
 
+myRouter.post('/:userId/renewSchedule', medsController.renewSchedule, (req, res) => {
+  const data = res.locals;
+  //console.log('med==>', med);
+  res.json(data);
+});
 // router.get('/auth', cookieController.verifyCookie, (req, res) =>
 //   res.status(200).json(res.locals)
 // );

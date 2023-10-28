@@ -1,6 +1,6 @@
 const Axios = require('axios');
 
-const { User, MedSchedule } = require('../models/models');
+const { MedSchedule } = require('../models/models');
 
 const medsController = {};
 
@@ -17,9 +17,6 @@ medsController.addToSchedule = async (req, res, next) => {
     if (!medSchedule) {
       medSchedule = await new MedSchedule(data).save();
     }
-
-    console.log('medSchedule==>', medSchedule);
-
     res.locals = medSchedule;
     return next();
   } catch (error) {
@@ -28,15 +25,13 @@ medsController.addToSchedule = async (req, res, next) => {
 };
 
 medsController.checkItem = async (req, res, next) => {
-  const { userId, itemId, medList } = req.body;
-  console.log('userId==>', userId);
-  console.log('itemId==>', itemId);
+  const { userId, nextSchedule } = req.body;
+
   try {
     let medSchedule = await MedSchedule.findOneAndUpdate(
-      { userId: userId, 'schedule._id': itemId },
-      { $set: { schedule: medList } },
+      { userId: userId },
+      { $set: { schedule: nextSchedule } },
       // [{ $set: { 'schedule.$.taken': { $eq: [false, 'schedule.$.taken'] } } }],
-
       { new: true }
     );
     if (!medSchedule) {
@@ -50,17 +45,29 @@ medsController.checkItem = async (req, res, next) => {
   }
 };
 
-medsController.getMedListByUserId = async (req, res, next) => {
+medsController.getScheduleByUserId = async (req, res, next) => {
   const userId = req.params.userId;
-  console.log('userId  from param==>', userId);
-  // console.log('reached getMedListByuserId controller');
   try {
     const data = await MedSchedule.findOne({ userId });
-    //res.header("Cache-Control", "max-age=10").json(posts)
+
     res.locals = data;
     return next();
   } catch (e) {
     res.status(500).send('Sorry, invalid user requested.');
+  }
+};
+
+medsController.renewSchedule = async (req, res, next) => {
+  const userId = req.params.userId;
+  const newProfile = req.body;
+
+  try {
+    const data = await MedSchedule.findOneAndReplace({ userId }, newProfile);
+    //res.header("Cache-Control", "max-age=10").json(posts)
+    res.locals = data;
+    return next();
+  } catch (e) {
+    console.log(e);
   }
 };
 
