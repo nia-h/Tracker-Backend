@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Client and Host Model
@@ -51,9 +51,9 @@ const dailyMedListSchema = new Schema({
   ],
 });
 
-const User = mongoose.model('user', userSchema);
-const MedSchedule = mongoose.model('medSchedule', medScheduleSchema);
-const DailyMedList = mongoose.model('dailymedList', dailyMedListSchema);
+const User = mongoose.model("user", userSchema);
+const MedSchedule = mongoose.model("medSchedule", medScheduleSchema);
+const DailyMedList = mongoose.model("dailymedList", dailyMedListSchema);
 
 // const Location = mongoose.model('locations', locationSchema);
 
