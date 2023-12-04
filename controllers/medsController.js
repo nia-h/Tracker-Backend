@@ -5,15 +5,13 @@ const { Regimen } = require("../models/models");
 const medsController = {};
 
 medsController.updateSchedule = async (req, res, next) => {
-  console.log("hit updateSchedule");
   // const data = req.body;
 
   try {
-    //first check if one exists
     let regimen = await Regimen.findOne({ userId: "6534551cee9aec8785693bz0" });
 
     let key = "1234567";
-    regimen.schedule[key] = [
+    regimen.schedule.set(key, [
       { med: "abc", time: "11:12", taken: true, _id: "656d9bec931d3169f1aac129" },
       {
         med: "xyz",
@@ -21,8 +19,13 @@ medsController.updateSchedule = async (req, res, next) => {
         taken: false,
         _id: "656d9bec931d3169f1aac12a",
       },
-    ];
-    const updatedRegiman = regimen.save();
+    ]);
+    const updatedRegiman = await regimen.save();
+    // await regimen.save();
+    // const updatedRegiman = await Regimen.findOne({
+    //   userId: "6534551cee9aec8785693bz0",
+    // });
+
     // if (!medSchedule) {
     //   medSchedule = await new MedSchedule(data).save();
     // }
