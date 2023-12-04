@@ -53,13 +53,13 @@ myRouter.post("/checkItem", medsController.checkItem, (req, res) => {
   //console.log('med==>', med);
   res.json(data);
 });
-myRouter.get("/:userId/schedule", medsController.getScheduleByUserId, (req, res) => {
+myRouter.get("/:userId/regimen", medsController.getRegimenByUserId, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);
   res.json(data);
 });
 
-myRouter.post("/:userId/renewSchedule", medsController.renewSchedule, (req, res) => {
+myRouter.post("/:userId/renewRegimen", medsController.renewRegimen, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);
   res.json(data);

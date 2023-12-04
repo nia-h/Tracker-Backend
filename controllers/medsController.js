@@ -78,10 +78,10 @@ medsController.checkItem = async (req, res, next) => {
   }
 };
 
-medsController.getScheduleByUserId = async (req, res, next) => {
+medsController.getRegimenByUserId = async (req, res, next) => {
   const userId = req.params.userId;
   try {
-    const data = await MedSchedule.findOne({ userId });
+    const data = await Regimen.findOne({ userId });
 
     res.locals = data;
     return next();
@@ -90,18 +90,31 @@ medsController.getScheduleByUserId = async (req, res, next) => {
   }
 };
 
-medsController.renewSchedule = async (req, res, next) => {
+medsController.renewRegimen = async (req, res, next) => {
   const userId = req.params.userId;
-  const newProfile = req.body;
+  const { lastActiveAt, newSchedule } = req.body;
 
   try {
-    const data = await MedSchedule.findOneAndReplace({ userId }, newProfile);
-    //res.header("Cache-Control", "max-age=10").json(posts)
-    res.locals = data;
+    let regimen = await Regimen.findOne({ userId });
+
+    regimen.lastActiveAt = lastActiveAt;
+
+    regimen.schedule.set(lastActiveAt, newSchedule);
+    const renewedRegiman = await regimen.save();
+    // await regimen.save();
+    // const renewedRegiman = await Regimen.findOne({
+    //   userId: "6534551cee9aec8785693bz0",
+    // });
+
+    // if (!medSchedule) {
+    //   medSchedule = await new MedSchedule(data).save();
+    // }
+    res.locals = renewedRegiman;
     return next();
   } catch (e) {
     console.log(e);
   }
 };
+f;
 
 module.exports = medsController;

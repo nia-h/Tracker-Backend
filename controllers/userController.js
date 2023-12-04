@@ -1,12 +1,12 @@
-const { User } = require('../models/models');
+const { User } = require("../models/models");
 // const Post = require("../models/Post")
 // const Follow = require("../models/Follow")
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 // // how long a token lasts before expiring
-const tokenLasts = '365d';
+const tokenLasts = "365d";
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const userController = {};
 
@@ -22,13 +22,13 @@ userController.register = async (req, res, next) => {
     res.locals = user;
     return next();
   } catch (e) {
-    console.log('e');
+    console.log("e");
   }
 };
 
 userController.login = async (req, res, next) => {
   const { email, password } = req.body;
-  console.log('email==>', email);
+  console.log("email==>", email);
 
   try {
     const user = await User.findOne({ email });
@@ -39,15 +39,15 @@ userController.login = async (req, res, next) => {
           process.env.JWTSECRET,
           { expiresIn: tokenLasts }
         ),
-        email: user.email,
+        // email: user.email,
         userId: user._id,
-        profile: user,
+        // profile: user,
       };
       return next();
     } else {
       return next({
-        log: 'userController.login ERROR',
-        message: 'userController.login ERROR: invalid email/password',
+        log: "userController.login ERROR",
+        message: "userController.login ERROR: invalid email/password",
       });
     }
   } catch (e) {
