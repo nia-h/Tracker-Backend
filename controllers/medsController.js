@@ -1,23 +1,53 @@
-const Axios = require('axios');
+const Axios = require("axios");
 
-const { MedSchedule } = require('../models/models');
+const { Regimen } = require("../models/models");
 
 const medsController = {};
 
-medsController.addToSchedule = async (req, res, next) => {
+medsController.updateSchedule = async (req, res, next) => {
+  console.log("hit updateSchedule");
+  // const data = req.body;
+
+  try {
+    //first check if one exists
+    let regimen = await Regimen.findOne({ userId: "6534551cee9aec8785693bz0" });
+
+    let key = "1234567";
+    regimen.schedule[key] = [
+      { med: "abc", time: "11:12", taken: true, _id: "656d9bec931d3169f1aac129" },
+      {
+        med: "xyz",
+        time: "22:11",
+        taken: false,
+        _id: "656d9bec931d3169f1aac12a",
+      },
+    ];
+    const updatedRegiman = regimen.save();
+    // if (!medSchedule) {
+    //   medSchedule = await new MedSchedule(data).save();
+    // }
+    res.locals = updatedRegiman;
+    return next();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+medsController.createRegimen = async (req, res, next) => {
   const data = req.body;
 
   try {
     //first check if one exists
-    let medSchedule = await MedSchedule.findOneAndUpdate(
-      { userId: data.userId },
-      { $push: { schedule: { $each: data.schedule } } },
-      { new: true }
-    );
-    if (!medSchedule) {
-      medSchedule = await new MedSchedule(data).save();
-    }
-    res.locals = medSchedule;
+    // let medSchedule = await MedSchedule.findOneAndUpdate(
+    //   { userId: data.userId },
+    //   { $push: { schedule: { $each: data.schedule } } },
+    //   { new: true }
+    // );
+    // if (!medSchedule) {
+    //   medSchedule = await new MedSchedule(data).save();
+    // }
+    const regimen = await new Regimen(data).save();
+    res.locals = regimen;
     return next();
   } catch (error) {
     console.log(error);
@@ -35,7 +65,7 @@ medsController.checkItem = async (req, res, next) => {
       { new: true }
     );
     if (!medSchedule) {
-      throw Error('schedule not found!');
+      throw Error("schedule not found!");
     }
 
     res.locals = medSchedule;
@@ -53,7 +83,7 @@ medsController.getScheduleByUserId = async (req, res, next) => {
     res.locals = data;
     return next();
   } catch (e) {
-    res.status(500).send('Sorry, invalid user requested.');
+    res.status(500).send("Sorry, invalid user requested.");
   }
 };
 
