@@ -2,33 +2,33 @@ const Axios = require("axios");
 
 const { Regimen } = require("../models/models");
 
+const { isSameDay, parseISO } = require("date-fns");
+
 const medsController = {};
 
 medsController.updateSchedule = async (req, res, next) => {
-  // const data = req.body;
+  //We do want to save to the db than update UI?
+  const { userId, schedule, today } = req.body;
+  console.log("schedule==>", schedule);
+
+  const schedules = new Map().set(today, schedule);
 
   try {
-    let regimen = await Regimen.findOne({ userId: "6534551cee9aec8785693bz0" });
+    let regimen = await Regimen.findOne({ userId });
 
-    let key = "1234567";
-    regimen.schedule.set(key, [
-      { med: "abc", time: "11:12", taken: true, _id: "656d9bec931d3169f1aac129" },
-      {
-        med: "xyz",
-        time: "22:11",
-        taken: false,
-        _id: "656d9bec931d3169f1aac12a",
-      },
-    ]);
+    if (regimen == null) {
+      regimen = await new Regimen({
+        userId,
+        lastActiveDay: today,
+        schedules,
+      }).save();
+    } else {
+      isSameDay(new Date(parseInt(regimen.lastActiveDay)), today)
+        ? regimen.schedules.get(regimen.lastActiveDay).push(...schedule)
+        : regimen.schedules.set(String(today), schedule);
+    }
     const updatedRegiman = await regimen.save();
-    // await regimen.save();
-    // const updatedRegiman = await Regimen.findOne({
-    //   userId: "6534551cee9aec8785693bz0",
-    // });
 
-    // if (!medSchedule) {
-    //   medSchedule = await new MedSchedule(data).save();
-    // }
     res.locals = updatedRegiman;
     return next();
   } catch (error) {
@@ -99,7 +99,7 @@ medsController.renewRegimen = async (req, res, next) => {
 
     regimen.lastActiveAt = lastActiveAt;
 
-    regimen.schedule.set(lastActiveAt, newSchedule);
+    regimen.schedules.set(lastActiveAt, newSchedule);
     const renewedRegiman = await regimen.save();
     // await regimen.save();
     // const renewedRegiman = await Regimen.findOne({
@@ -115,6 +115,5 @@ medsController.renewRegimen = async (req, res, next) => {
     console.log(e);
   }
 };
-f;
 
 module.exports = medsController;

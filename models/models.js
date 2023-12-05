@@ -28,7 +28,7 @@ const regimenSchema = new Schema({
     unique: true,
   },
 
-  lastActiveAt: {
+  lastActiveDay: {
     //to be updated the first visit of each new day together with lastActiveAt
     type: String,
     // `Date.now()` returns the current unix timestamp as a number
@@ -40,7 +40,7 @@ const regimenSchema = new Schema({
   // ],
   // schedule: { type: Map, of: Object },
 
-  schedule: {
+  schedules: {
     type: Map,
     of: [courseSchema],
   },
