@@ -11,12 +11,12 @@ medsController.updateSchedule = async (req, res, next) => {
   const { userId, schedule, today } = req.body;
   console.log("schedule==>", schedule);
 
-  const schedules = new Map().set(today, schedule);
-
   try {
-    let regimen = await Regimen.findOne({ userId });
+    let regimen = await Regimen.findOne({ userId }); // split controllers into  smaller ones - locate/find regimen -> update ->..._. next...
 
     if (regimen == null) {
+      const schedules = new Map().set(today, schedule);
+
       regimen = await new Regimen({
         userId,
         lastActiveDay: today,
@@ -61,17 +61,13 @@ medsController.checkItem = async (req, res, next) => {
   const { userId, nextSchedule } = req.body;
 
   try {
-    let medSchedule = await MedSchedule.findOneAndUpdate(
-      { userId: userId },
-      { $set: { schedule: nextSchedule } },
-      // [{ $set: { 'schedule.$.taken': { $eq: [false, 'schedule.$.taken'] } } }],
-      { new: true }
-    );
-    if (!medSchedule) {
-      throw Error("schedule not found!");
-    }
+    let regimen = await Regimen.findOne({ userId });
 
-    res.locals = medSchedule;
+    regimen.schedules.set(regimen.lastActiveDay, nextSchedule);
+
+    const updatedRegiman = await regimen.save();
+
+    res.locals = updatedRegiman;
     return next();
   } catch (error) {
     console.log(error);
@@ -92,14 +88,16 @@ medsController.getRegimenByUserId = async (req, res, next) => {
 
 medsController.renewRegimen = async (req, res, next) => {
   const userId = req.params.userId;
-  const { lastActiveAt, newSchedule } = req.body;
+  const { lastActiveDay, schedule } = req.body;
+
+  console.log("lastActiveDay==>", lastActiveDay);
 
   try {
     let regimen = await Regimen.findOne({ userId });
 
-    regimen.lastActiveAt = lastActiveAt;
+    regimen.lastActiveDay = lastActiveDay;
 
-    regimen.schedules.set(lastActiveAt, newSchedule);
+    regimen.schedules.set(String(lastActiveDay), schedule);
     const renewedRegiman = await regimen.save();
     // await regimen.save();
     // const renewedRegiman = await Regimen.findOne({
@@ -109,7 +107,9 @@ medsController.renewRegimen = async (req, res, next) => {
     // if (!medSchedule) {
     //   medSchedule = await new MedSchedule(data).save();
     // }
+    // console.log("renewedRegiman==>", renewedRegiman);
     res.locals = renewedRegiman;
+
     return next();
   } catch (e) {
     console.log(e);
