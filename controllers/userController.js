@@ -13,6 +13,7 @@ const userController = {};
 // userController.test = a;
 
 userController.register = async (req, res, next) => {
+  console.log("hit register controller");
   let { email, password } = req.body;
   let salt = bcrypt.genSaltSync(10);
   password = bcrypt.hashSync(password, salt);
@@ -22,7 +23,7 @@ userController.register = async (req, res, next) => {
     res.locals = user;
     return next();
   } catch (e) {
-    console.log("e");
+    console.log(e);
   }
 };
 
@@ -34,11 +35,7 @@ userController.login = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (user && bcrypt.compareSync(password, user.password)) {
       res.locals = {
-        token: jwt.sign(
-          { _id: user._id, email: user.email },
-          process.env.JWTSECRET,
-          { expiresIn: tokenLasts }
-        ),
+        token: jwt.sign({ _id: user._id, email: user.email }, process.env.JWTSECRET, { expiresIn: tokenLasts }),
         // email: user.email,
         userId: user._id,
         // profile: user,

@@ -37,18 +37,17 @@ medsController.updateSchedule = async (req, res, next) => {
 };
 
 medsController.createRegimen = async (req, res, next) => {
-  const data = req.body;
+  // chain a login controller?
+  console.log("hit createREgimen controller");
+
+  // const data = req.body;
+  console.log("res.locals==>", res.locals);
+  const { _id: userId } = res.locals;
+  const { today } = req.body;
+
+  const data = { userId, lastActiveDay: today, schedules: new Map().set(String(today), []) };
 
   try {
-    //first check if one exists
-    // let medSchedule = await MedSchedule.findOneAndUpdate(
-    //   { userId: data.userId },
-    //   { $push: { schedule: { $each: data.schedule } } },
-    //   { new: true }
-    // );
-    // if (!medSchedule) {
-    //   medSchedule = await new MedSchedule(data).save();
-    // }
     const regimen = await new Regimen(data).save();
     res.locals = regimen;
     return next();
@@ -58,6 +57,7 @@ medsController.createRegimen = async (req, res, next) => {
 };
 
 medsController.checkItem = async (req, res, next) => {
+  console.log("hit checkItem controller");
   const { userId, nextSchedule } = req.body;
 
   try {

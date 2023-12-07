@@ -6,11 +6,7 @@ const medsController = require("./controllers/medsController.js");
 const userController = require("./controllers/userController");
 
 myRouter.get("/", (req, res) =>
-  res
-    .status(201)
-    .json(
-      "Hello, if you see this message that means your backend is up and running successfully."
-    )
+  res.status(201).json("Hello, if you see this message that means your backend is up and running successfully.")
 );
 
 // myRouter.post("/addToSchedule", medsController.addToSchedule, (req, res) => {
@@ -31,15 +27,10 @@ myRouter.post("/updateSchedule", medsController.updateSchedule, (req, res) => {
   res.json(data);
 });
 
-myRouter.post(
-  "/register",
-  userController.register,
-
-  (req, res) => {
-    const data = res.locals;
-    res.json(data);
-  }
-);
+myRouter.post("/register", userController.register, medsController.createRegimen, (req, res) => {
+  const data = res.locals;
+  res.json(data);
+});
 
 myRouter.post("/login", userController.login, (req, res) => {
   const user = res.locals;
