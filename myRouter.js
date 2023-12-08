@@ -21,6 +21,12 @@ myRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
   res.json(data);
 });
 
+myRouter.get("/:userId/fetchSchedule", medsController.fetchSchedule, (req, res) => {
+  const { schedule } = res.locals;
+  // console.log("myRouter schedule==>", schedule);
+  res.json(schedule);
+});
+
 myRouter.post("/updateSchedule", medsController.updateSchedule, (req, res) => {
   const data = res.locals;
 
@@ -40,11 +46,6 @@ myRouter.post("/login", userController.login, (req, res) => {
 });
 
 myRouter.post("/checkItem", medsController.checkItem, (req, res) => {
-  const data = res.locals;
-  //console.log('med==>', med);
-  res.json(data);
-});
-myRouter.get("/:userId/regimen", medsController.getRegimenByUserId, (req, res) => {
   const data = res.locals;
   //console.log('med==>', med);
   res.json(data);

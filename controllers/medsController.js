@@ -8,28 +8,19 @@ const medsController = {};
 
 medsController.updateSchedule = async (req, res, next) => {
   //We do want to save to the db than update UI?
-  const { userId, schedule, today } = req.body;
-  console.log("schedule==>", schedule);
+  const { userId, addedCourses } = req.body;
 
   try {
     let regimen = await Regimen.findOne({ userId }); // split controllers into  smaller ones - locate/find regimen -> update ->..._. next...
 
-    if (regimen == null) {
-      const schedules = new Map().set(today, schedule);
+    if (regimen == null) return;
 
-      regimen = await new Regimen({
-        userId,
-        lastActiveDay: today,
-        schedules,
-      }).save();
-    } else {
-      isSameDay(new Date(parseInt(regimen.lastActiveDay)), today)
-        ? regimen.schedules.get(regimen.lastActiveDay).push(...schedule)
-        : regimen.schedules.set(String(today), schedule);
-    }
+    regimen.schedules.get(regimen.lastActiveDay).push(...addedCourses);
+    console.log(regimen.schedules.get(regimen.lastActiveDay));
+
     const updatedRegiman = await regimen.save();
 
-    res.locals = updatedRegiman;
+    res.locals = updatedRegiman.schedules.get(regimen.lastActiveDay);
     return next();
   } catch (error) {
     console.log(error);
@@ -66,6 +57,8 @@ medsController.checkItem = async (req, res, next) => {
     regimen.schedules.set(regimen.lastActiveDay, nextSchedule);
 
     const updatedRegiman = await regimen.save();
+    console.log("updated Regiman==>", updatedRegiman);
+    return;
 
     res.locals = updatedRegiman;
     return next();
@@ -74,21 +67,65 @@ medsController.checkItem = async (req, res, next) => {
   }
 };
 
-medsController.getRegimenByUserId = async (req, res, next) => {
+medsController.fetchSchedule = async (req, res, next) => {
+  // will need to update regimen and send back schedule
   const userId = req.params.userId;
   try {
-    const data = await Regimen.findOne({ userId });
+    const regimen = await Regimen.findOne({ userId });
 
-    res.locals = data;
-    return next();
+    let schedule = regimen.schedules.get(regimen.lastActiveDay);
+
+    // (course => {
+    //   course.taken = false;
+    //   delete course.time;
+    //   return course;
+    // });
+
+    // const myArray = [
+    //   { name: "bob", _id: ObjectId("656f21cef75acffd204c23ba") },
+    //   { name: "jerry", _id: 2 },
+    // ];
+
+    // const my2Array = [...myArray].map(e => {
+    //   delete e._id;
+    //   return e;
+    // });
+    // console.log(my2Array);
+
+    let today = Date.now();
+
+    if (!isSameDay(new Date(today), new Date(parseInt(regimen.lastActiveDay)))) {
+      let newSchedule = [];
+
+      // const newSchedule = schedule.map(({ _id, ...item }) => item);
+      schedule.forEach(course => {
+        let newCourse = {};
+        newCourse.taken = false;
+        newCourse.med = course.med;
+        newCourse.time = course.time;
+
+        newSchedule.push(newCourse);
+      });
+
+      // console.log("new schedule==>", newSchedule);
+      regimen.lastActiveDay = today;
+      regimen.schedules.set(today.toISOString(), newSchedule);
+      await regimen.save();
+
+      res.locals.schedule = regimen.schedules.get(String(today));
+      return next();
+    } else {
+      res.locals.schedule = schedule;
+      return next();
+    }
   } catch (e) {
-    res.status(500).send("Sorry, invalid user requested.");
+    console.log(e);
   }
 };
 
 medsController.renewRegimen = async (req, res, next) => {
   const userId = req.params.userId;
-  const { lastActiveDay, schedule } = req.body;
+  const regimen = res.locals;
 
   console.log("lastActiveDay==>", lastActiveDay);
 
@@ -97,7 +134,7 @@ medsController.renewRegimen = async (req, res, next) => {
 
     regimen.lastActiveDay = lastActiveDay;
 
-    regimen.schedules.set(String(lastActiveDay), schedule);
+    regimen.schedules.set(String(lastActiveDay), schedule); // extract a new function, eliminating duplicated code
     const renewedRegiman = await regimen.save();
     // await regimen.save();
     // const renewedRegiman = await Regimen.findOne({
