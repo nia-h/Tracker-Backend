@@ -32,11 +32,11 @@ medsController.createRegimen = async (req, res, next) => {
   console.log("hit createREgimen controller");
 
   // const data = req.body;
-  console.log("res.locals==>", res.locals);
+  // console.log("res.locals==>", res.locals);
   const { _id: userId } = res.locals;
-  const { today } = req.body;
+  const today = new Date().toDateString();
 
-  const data = { userId, lastActiveDay: today, schedules: new Map().set(String(today), []) };
+  const data = { userId, lastActiveDay: today, schedules: new Map().set(today, []) };
 
   try {
     const regimen = await new Regimen(data).save();
@@ -92,9 +92,9 @@ medsController.fetchSchedule = async (req, res, next) => {
     // });
     // console.log(my2Array);
 
-    let today = Date.now();
+    let today = new Date().toDateString();
 
-    if (!isSameDay(new Date(today), new Date(parseInt(regimen.lastActiveDay)))) {
+    if (!isSameDay(new Date(today), new Date(regimen.lastActiveDay))) {
       let newSchedule = [];
 
       // const newSchedule = schedule.map(({ _id, ...item }) => item);
@@ -109,10 +109,10 @@ medsController.fetchSchedule = async (req, res, next) => {
 
       // console.log("new schedule==>", newSchedule);
       regimen.lastActiveDay = today;
-      regimen.schedules.set(today.toISOString(), newSchedule);
+      regimen.schedules.set(today, newSchedule);
       await regimen.save();
 
-      res.locals.schedule = regimen.schedules.get(String(today));
+      res.locals.schedule = regimen.schedules.get(today);
       return next();
     } else {
       res.locals.schedule = schedule;
@@ -134,7 +134,7 @@ medsController.renewRegimen = async (req, res, next) => {
 
     regimen.lastActiveDay = lastActiveDay;
 
-    regimen.schedules.set(String(lastActiveDay), schedule); // extract a new function, eliminating duplicated code
+    regimen.schedules.set(lastActiveDay, schedule); // extract a new function, eliminating duplicated code
     const renewedRegiman = await regimen.save();
     // await regimen.save();
     // const renewedRegiman = await Regimen.findOne({
