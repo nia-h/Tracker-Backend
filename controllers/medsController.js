@@ -70,8 +70,11 @@ medsController.checkItem = async (req, res, next) => {
 medsController.fetchSchedule = async (req, res, next) => {
   // will need to update regimen and send back schedule
   const userId = req.params.userId;
+  console.log("userId==>", userId);
   try {
     const regimen = await Regimen.findOne({ userId });
+
+    console.log("regimen==>", regimen);
 
     let schedule = regimen.schedules.get(regimen.lastActiveDay);
 
