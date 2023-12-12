@@ -15,6 +15,14 @@ const userSchema = new Schema({
   },
 });
 
+const socialUserSchema = new Schema({
+  socialId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
+
 const courseSchema = new Schema({
   med: String,
   time: String,
@@ -77,6 +85,8 @@ const regimenSchema = new Schema({
 const User = mongoose.model("user", userSchema);
 const Regimen = mongoose.model("regimen", regimenSchema);
 const Course = mongoose.model("course", courseSchema);
+const SocialUser = mongoose.model("socialUser", socialUserSchema);
+
 // const DailyMedList = mongoose.model("medList", dailyMedListSchema);
 
 // const Location = mongoose.model('locations', locationSchema);
@@ -85,5 +95,5 @@ module.exports = {
   User,
   Regimen,
   Course,
-  // DailyMedList,
+  SocialUser,
 };

@@ -30,17 +30,19 @@ medsController.updateSchedule = async (req, res, next) => {
 medsController.createRegimen = async (req, res, next) => {
   // chain a login controller?
   console.log("hit createREgimen controller");
+  if (res.locals.user) return next();
 
   // const data = req.body;
   // console.log("res.locals==>", res.locals);
-  const { _id: userId } = res.locals;
+  const { _id: userId } = res.locals.user;
   const today = new Date().toDateString();
+  console.log("userId from createRegimen==>", userId);
 
   const data = { userId, lastActiveDay: today, schedules: new Map().set(today, []) };
 
   try {
     const regimen = await new Regimen(data).save();
-    res.locals = regimen;
+    res.locals.regimen = regimen;
     return next();
   } catch (error) {
     console.log(error);
@@ -58,8 +60,7 @@ medsController.checkItem = async (req, res, next) => {
 
     const updatedRegiman = await regimen.save();
     console.log("updated Regiman==>", updatedRegiman);
-    return;
-
+    // debug?? here
     res.locals = updatedRegiman;
     return next();
   } catch (error) {
