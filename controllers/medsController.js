@@ -7,12 +7,12 @@ const { isSameDay, parseISO } = require("date-fns");
 const medsController = {};
 
 medsController.updateSchedule = async (req, res, next) => {
-  //We do want to save to the db than update UI?
   const { userId, addedCourses } = req.body;
+  console.log("userId from updateSchedule middleware==>", userId);
 
   try {
     let regimen = await Regimen.findOne({ userId }); // split controllers into  smaller ones - locate/find regimen -> update ->..._. next...
-
+    console.log("regimen from updateSchedule middleware==>", regimen);
     if (regimen == null) return;
 
     regimen.schedules.get(regimen.lastActiveDay).push(...addedCourses);
@@ -30,7 +30,6 @@ medsController.updateSchedule = async (req, res, next) => {
 medsController.createRegimen = async (req, res, next) => {
   // chain a login controller?
   console.log("hit createREgimen controller");
-  if (res.locals.user) return next();
 
   // const data = req.body;
   // console.log("res.locals==>", res.locals);
@@ -41,7 +40,11 @@ medsController.createRegimen = async (req, res, next) => {
   const data = { userId, lastActiveDay: today, schedules: new Map().set(today, []) };
 
   try {
-    const regimen = await new Regimen(data).save();
+    let regimen = await Regimen.findOne({ userId });
+    if (!regimen) {
+      regimen = await new Regimen(data).save();
+      console.log("regimen right after creation==>", regimen);
+    }
     res.locals.regimen = regimen;
     return next();
   } catch (error) {

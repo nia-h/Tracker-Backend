@@ -17,8 +17,8 @@ const cookieSession = require("cookie-session");
 
 // app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieSession({ name: "MTsession", keys: ["medsTraker"], maxAge: 24 * 60 * 60 * 1000 }));
 
 app.use(function (request, response, next) {
