@@ -10,8 +10,6 @@ const bcrypt = require("bcrypt");
 
 const userController = {};
 
-// userController.test = a;
-
 userController.register = async (req, res, next) => {
   console.log("hit register controller");
   if (res.locals.user) return next();
@@ -65,9 +63,7 @@ userController.login = async (req, res, next) => {
     if (user && bcrypt.compareSync(password, user.password)) {
       res.locals = {
         token: jwt.sign({ _id: user._id, email: user.email }, process.env.JWTSECRET, { expiresIn: tokenLasts }),
-        // email: user.email,
         userId: user._id,
-        // profile: user,
       };
       return next();
     } else {

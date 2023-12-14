@@ -52,35 +52,7 @@ const regimenSchema = new Schema({
     type: Map,
     of: [courseSchema],
   },
-  // defalut: new Map().set(Date.now(), {}),
 });
-
-// "schedule": {
-//   "1234567datenowstring": {
-//       "med": "abc",
-//       "time": "11:11",
-//       "taken": false,
-//       "_id": "656d12fbf090f610b1fdedd9"
-//   }
-// },
-
-// const dailyMedListSchema = new Schema({
-//   //new Date(1697899238992).getDate()
-//   date: {
-//     type: Date,
-//     // `Date.now()` returns the current unix timestamp as a number
-//     default: Date.now,
-//   },
-//   userId: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//   },
-
-//   schedule: [
-//     { med: String, time: String, taken: { type: Boolean, default: false } },
-//   ],
-// });
 
 const User = mongoose.model("user", userSchema);
 const Regimen = mongoose.model("regimen", regimenSchema);

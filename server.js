@@ -1,8 +1,5 @@
-require("dotenv").config();
+// require("dotenv").config();
 const express = require("express");
-const path = require("path");
-// const logger = require('morgan');
-// const cookieParser = require('cookie-parser');
 const cors = require("cors");
 const mongoose = require("mongoose");
 const PORT = process.env.PORT;
@@ -13,15 +10,12 @@ const passport = require("passport");
 const passportSetup = require("./passport"); //This is needed for auth to work even tho it seems that it is never read
 const cookieSession = require("cookie-session");
 
-// const bodyParser = require("body-parser");
-
-// app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieSession({ name: "MTsession", keys: ["medsTraker"], maxAge: 24 * 60 * 60 * 1000 }));
 
 app.use(function (request, response, next) {
+  // This is a walkaround see below post
   //https://stackoverflow.com/questions/72375564/typeerror-req-session-regenerate-is-not-a-function-using-passport
 
   if (request.session && !request.session.regenerate) {
@@ -39,7 +33,6 @@ app.use(function (request, response, next) {
 
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(bodyParser);
 
 app.use(
   cors({

@@ -4,7 +4,6 @@ const passport = require("passport");
 const CLIENT_URL = "http://localhost:5173/";
 
 router.get("/login/success", (req, res) => {
-  // console.log("req.user==>", req.user);
   if (req.user) {
     res.status(200).json({
       success: true,
@@ -31,13 +30,6 @@ router.get("/logout", (req, res, next) => {
   }); // this method is from passport
   res.redirect(CLIENT_URL);
 });
-
-// app.post('/logout', function(req, res, next) {
-//   req.logout(function(err) {
-//     if (err) { return next(err); }
-//     res.redirect('/');
-//   });
-// });
 
 router.get("/github", passport.authenticate("github", { scope: ["profile", "email"] }));
 
