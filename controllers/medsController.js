@@ -45,7 +45,6 @@ medsController.createRegimen = async (req, res, next) => {
 };
 
 medsController.checkItem = async (req, res, next) => {
-  console.log("hit checkItem controller");
   const { userId, nextSchedule } = req.body;
 
   try {
@@ -67,8 +66,6 @@ medsController.fetchSchedule = async (req, res, next) => {
 
   try {
     const regimen = await Regimen.findOne({ userId });
-
-    console.log("regimen==>", regimen);
 
     let schedule = regimen.schedules.get(regimen.lastActiveDay);
 

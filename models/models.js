@@ -37,7 +37,7 @@ const regimenSchema = new Schema({
   },
 
   lastActiveDay: {
-    //to be updated the first visit of each new day together with lastActiveAt
+    //to be updated the first visit of each new day
     type: String,
     // `Date.now()` returns the current unix timestamp as a number
     default: new Date().toDateString(),
