@@ -72,14 +72,9 @@ medsController.fetchSchedule = async (req, res, next) => {
     let today = new Date().toDateString();
 
     if (!isSameDay(new Date(today), new Date(regimen.lastActiveDay))) {
-      let newSchedule = [];
-
-      schedule.forEach(course => {
-        let newCourse = {};
-        newCourse.taken = false;
-        newCourse.med = course.med;
-        newCourse.time = course.time;
-        newSchedule.push(newCourse);
+      let newSchedule = schedule.map(course => {
+        course.taken = false;
+        return course;
       });
 
       regimen.lastActiveDay = today;
