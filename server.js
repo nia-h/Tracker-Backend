@@ -39,10 +39,10 @@ async function updateAll() {
 }
 
 const cronJob = cron.schedule("0 0 0 * * *", updateAll, {
-  scheduled: true,
+  scheduled: false,
   timezone: "Asia/Shanghai",
 });
-// cronJob.start();
+cronJob.start();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
