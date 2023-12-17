@@ -46,7 +46,7 @@ mainRouter.post("/login", userController.login, (req, res) => {
   res.json(user);
 });
 
-mainRouter.post("/checkItem", medsController.checkItem, (req, res) => {
+mainRouter.post("/checkOrDeleteCourse", medsController.checkOrDeleteCourse, (req, res) => {
   const data = res.locals;
 
   res.json(data);
