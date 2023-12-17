@@ -14,7 +14,7 @@ userController.register = async (req, res, next) => {
   console.log("hit register controller");
   if (res.locals.user) return next();
   let socialId = req.params.socialId;
-  console.log("socialId form regisgter middleware==>", socialId);
+  console.log("socialId from regisgter middleware==>", socialId);
 
   if (socialId) {
     //social user

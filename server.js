@@ -9,6 +9,40 @@ const authRoute = require("./routes/authRoute");
 const passport = require("passport");
 const passportSetup = require("./passport"); //This is needed for auth to work even tho it seems that it is never read
 const cookieSession = require("cookie-session");
+const cron = require("node-cron");
+const Axios = require("axios");
+
+const { Regimen } = require("./models/models");
+
+async function updateAll() {
+  console.log("updatAll called");
+  let today = new Date().toDateString();
+  let yesterday = getPreviousDay();
+  try {
+    const regimens = await Regimen.find({});
+    regimens.forEach(async regimen => {
+      if (regimen.schedules.get(today)) return;
+      let schedule = regimen.schedules.get(yesterday);
+      console.log("schedule==>", schedule);
+
+      let newSchedule = schedule.map(course => {
+        course.taken = false;
+        return course;
+      });
+      console.log("newSchedule==>", newSchedule);
+      regimen.schedules.set(today, newSchedule);
+      await regimen.save();
+    });
+  } catch (e) {
+    console.log("error==>", e);
+  }
+}
+
+const cronJob = cron.schedule("0 0 0 * * *", updateAll, {
+  scheduled: true,
+  timezone: "Asia/Shanghai",
+});
+// cronJob.start();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -87,3 +121,10 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}...`);
 });
+
+const getPreviousDay = (date = new Date()) => {
+  const previous = new Date(date.getTime());
+  previous.setDate(date.getDate() - 1);
+
+  return previous.toDateString();
+};
