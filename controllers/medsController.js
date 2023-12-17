@@ -67,50 +67,21 @@ medsController.fetchSchedule = async (req, res, next) => {
   try {
     const regimen = await Regimen.findOne({ userId });
 
-    let schedule = regimen.schedules.get(regimen.lastActiveDay);
+    // let schedule = regimen.schedules.get(regimen.lastActiveDay);
 
     let today = new Date().toDateString();
 
     if (!isSameDay(new Date(today), new Date(regimen.lastActiveDay))) {
-      let newSchedule = schedule.map(course => {
-        course.taken = false;
-        return course;
-      });
-
       regimen.lastActiveDay = today;
-      regimen.schedules.set(today, newSchedule);
-      await regimen.save();
 
-      res.locals.schedule = regimen.schedules.get(today);
-      return next();
-    } else {
-      res.locals.schedule = schedule;
-      return next();
+      await regimen.save();
     }
+    //console.log("regimen===>, " regimen)  //need testing here to see if there is a problem of "stale data"
+    res.locals.schedule = regimen.schedules.get(regimen.lastActiveDay);
+    return next();
   } catch (e) {
     console.log(e);
   }
 };
-
-// medsController.renewRegimen = async (req, res, next) => {
-//   const userId = req.params.userId;
-//   const regimen = res.locals;
-
-//   console.log("lastActiveDay==>", lastActiveDay);
-
-//   try {
-//     let regimen = await Regimen.findOne({ userId });
-
-//     regimen.lastActiveDay = lastActiveDay;
-
-//     regimen.schedules.set(lastActiveDay, schedule); // extract a new function, eliminating duplicated code
-//     const renewedRegiman = await regimen.save();
-//     res.locals = renewedRegiman;
-
-//     return next();
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
 
 module.exports = medsController;
