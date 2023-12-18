@@ -10,6 +10,18 @@ const bcrypt = require("bcrypt");
 
 const userController = {};
 
+userController.checkLoggedIn = function (req, res, next) {
+  console.log("req.body.token==>", req.body.token);
+
+  try {
+    req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
+
+    next();
+  } catch (e) {
+    res.status(500).send("Sorry, you must provide a valid token.");
+  }
+};
+
 userController.register = async (req, res, next) => {
   console.log("hit register controller");
   if (res.locals.user) return next();
@@ -58,13 +70,18 @@ userController.socialUserLogin = async (req, res, next) => {
 userController.login = async (req, res, next) => {
   const { email, password } = req.body;
 
+  console.log("email==>", email);
+
   try {
     const user = await User.findOne({ email });
+
     if (user && bcrypt.compareSync(password, user.password)) {
+      console.log("PW validated");
       res.locals = {
         token: jwt.sign({ _id: user._id, email: user.email }, process.env.JWTSECRET, { expiresIn: tokenLasts }),
         userId: user._id,
       };
+      console.log("login sucessful");
       return next();
     } else {
       return next({
@@ -73,7 +90,7 @@ userController.login = async (req, res, next) => {
       });
     }
   } catch (e) {
-    return next(e);
+    console.log("error===>", e);
   }
 };
 

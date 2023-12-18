@@ -38,7 +38,7 @@ async function updateAll() {
   }
 }
 
-const cronJob = cron.schedule("0 0 0 * * *", updateAll, {
+const cronJob = cron.schedule("0 58 9 * * *", updateAll, {
   scheduled: false,
   timezone: "Asia/Shanghai",
 });
@@ -98,21 +98,21 @@ app.use((req, res) => {
   res.sendStatus(404);
 });
 
-// app.use((err, req, res, next) => {
-//   const defaultErr = {
-//     log: "Express error handler caught unknown middleware error",
-//     status: 500,
-//     message: { err: "An error occurred" },
-//   };
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: "Express error handler caught unknown middleware error",
+    status: 500,
+    message: { err: "An error occurred" },
+  };
 
-//   const errorObj = Object.assign(defaultErr, err);
+  const errorObj = Object.assign(defaultErr, err);
 
-//   return res.status(errorObj.status).json(errorObj.message);
-// });
+  return res.status(errorObj.status).json(errorObj.message);
+});
 
 // app.use(function (err, req, res, next) {
 //   res.status(err.status || 500);
-//   res.render('error', {
+//   res.render("error", {
 //     message: err.message,
 //     error: err,
 //   });

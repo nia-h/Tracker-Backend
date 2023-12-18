@@ -45,10 +45,19 @@ medsController.createRegimen = async (req, res, next) => {
 };
 
 medsController.checkOrDeleteCourse = async (req, res, next) => {
-  const { userId, nextSchedule } = req.body;
+  const { apiUser } = req;
+  console.log("apiUser==>", apiUser);
+
+  const { nextSchedule } = req.body;
+
+  console.log("nextSchedule==>", nextSchedule);
+
+  const { _id } = req.apiUser;
+
+  console.log("_id==>", _id);
 
   try {
-    let regimen = await Regimen.findOne({ userId });
+    let regimen = await Regimen.findOne({ userId: _id });
 
     regimen.schedules.set(regimen.lastActiveDay, nextSchedule);
 

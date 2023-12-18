@@ -46,11 +46,16 @@ mainRouter.post("/login", userController.login, (req, res) => {
   res.json(user);
 });
 
-mainRouter.post("/checkOrDeleteCourse", medsController.checkOrDeleteCourse, (req, res) => {
-  const data = res.locals;
+mainRouter.post(
+  "/checkOrDeleteCourse",
+  userController.checkLoggedIn,
+  medsController.checkOrDeleteCourse,
+  (req, res) => {
+    const data = res.locals;
 
-  res.json(data);
-});
+    res.json(data);
+  }
+);
 
 // router.get('/auth', cookieController.verifyCookie, (req, res) =>
 //   res.status(200).json(res.locals)
