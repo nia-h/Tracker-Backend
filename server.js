@@ -38,7 +38,7 @@ async function updateAll() {
   }
 }
 
-const cronJob = cron.schedule("0 58 9 * * *", updateAll, {
+const cronJob = cron.schedule("0 0 0 * * *", updateAll, {
   scheduled: false,
   timezone: "Asia/Shanghai",
 });
@@ -46,7 +46,7 @@ cronJob.start();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieSession({ name: "MTsession", keys: ["medsTraker"], maxAge: 24 * 60 * 60 * 1000 }));
+app.use(cookieSession({ name: "MTsession", keys: ["medsTraker"], maxAge: 24 * 60 * 60 * 1000 })); //keys are for encryption
 
 app.use(function (request, response, next) {
   // This is a walkaround see below post

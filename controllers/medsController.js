@@ -45,9 +45,6 @@ medsController.createRegimen = async (req, res, next) => {
 };
 
 medsController.checkOrDeleteCourse = async (req, res, next) => {
-  const { apiUser } = req;
-  console.log("apiUser==>", apiUser);
-
   const { nextSchedule } = req.body;
 
   console.log("nextSchedule==>", nextSchedule);
