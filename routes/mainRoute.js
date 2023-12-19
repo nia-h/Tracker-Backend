@@ -3,12 +3,23 @@ const mainRouter = express.Router();
 const medsController = require("../controllers/medsController.js");
 const userController = require("../controllers/userController");
 
+const checkLoggedIn = function (req, res, next) {
+  if (!req.body.token && !req.user) res.status(500).send("Sorry, you are not logged in.");
+
+  if (req.body.token) {
+    req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
+    next();
+  } else if (req.user) {
+    next();
+  }
+};
+
 mainRouter.get("/", (req, res) =>
   res.status(201).json("Hello, if you see this message that means your backend is up and running successfully.")
 );
 
 mainRouter.get(
-  "/:socialId/socialUserLogin",
+  "/socialUserLogin",
   userController.socialUserLogin,
   userController.register,
   medsController.createRegimen,
@@ -25,7 +36,7 @@ mainRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
   res.json(data);
 });
 
-mainRouter.get("/:userId/fetchSchedule", medsController.fetchSchedule, (req, res) => {
+mainRouter.get("/fetchSchedule", medsController.fetchSchedule, (req, res) => {
   const { schedule } = res.locals;
   res.json(schedule);
 });
@@ -46,16 +57,11 @@ mainRouter.post("/login", userController.login, (req, res) => {
   res.json(user);
 });
 
-mainRouter.post(
-  "/checkOrDeleteCourse",
-  userController.checkLoggedIn,
-  medsController.checkOrDeleteCourse,
-  (req, res) => {
-    const data = res.locals;
+mainRouter.post("/checkOrDeleteCourse", checkLoggedIn, medsController.checkOrDeleteCourse, (req, res) => {
+  const data = res.locals;
 
-    res.json(data);
-  }
-);
+  res.json(data);
+});
 
 // router.get('/auth', cookieController.verifyCookie, (req, res) =>
 //   res.status(200).json(res.locals)

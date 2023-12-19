@@ -47,14 +47,18 @@ medsController.createRegimen = async (req, res, next) => {
 medsController.checkOrDeleteCourse = async (req, res, next) => {
   const { nextSchedule } = req.body;
 
-  console.log("nextSchedule==>", nextSchedule);
+  let id;
 
-  const { _id } = req.apiUser;
+  if (req.apiUser) id = req.apiUser._id;
 
-  console.log("_id==>", _id);
+  if (req.user) id = req.user.id;
+
+  console.log("id==>", id);
+
+  return;
 
   try {
-    let regimen = await Regimen.findOne({ userId: _id });
+    let regimen = await Regimen.findOne({ userId: id });
 
     regimen.schedules.set(regimen.lastActiveDay, nextSchedule);
 
@@ -68,10 +72,12 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 };
 
 medsController.fetchSchedule = async (req, res, next) => {
-  const userId = req.params.userId;
+  // const userId = req.params.userId;
+  const user = req.user;
+  console.log("user from req.user==>", user);
 
   try {
-    const regimen = await Regimen.findOne({ userId });
+    const regimen = await Regimen.findOne({ userId: user.id });
 
     // let schedule = regimen.schedules.get(regimen.lastActiveDay);
 

@@ -10,18 +10,6 @@ const bcrypt = require("bcrypt");
 
 const userController = {};
 
-userController.checkLoggedIn = function (req, res, next) {
-  console.log("req.body.token==>", req.body.token);
-
-  try {
-    req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
-
-    next();
-  } catch (e) {
-    res.status(500).send("Sorry, you must provide a valid token.");
-  }
-};
-
 userController.register = async (req, res, next) => {
   console.log("hit register controller");
   if (res.locals.user) return next();
@@ -54,6 +42,8 @@ userController.register = async (req, res, next) => {
 };
 
 userController.socialUserLogin = async (req, res, next) => {
+  // console.log("req.session.passport.user==>", req.session.passport.user);
+  return;
   const socialId = req.params.socialId;
   console.log("socialId==>", socialId);
   try {

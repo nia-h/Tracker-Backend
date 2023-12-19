@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Client and Host Model
 const userSchema = new Schema({
   email: {
     type: String,
@@ -21,6 +20,11 @@ const socialUserSchema = new Schema({
     required: true,
     unique: true,
   },
+  username: {
+    type: String,
+    required: true,
+  },
+  thumbnail: String,
 });
 
 const courseSchema = new Schema({
