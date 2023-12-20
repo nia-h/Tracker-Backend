@@ -50,6 +50,6 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (idInCookie, done) => {
   const user = await SocialUser.findById(idInCookie);
-  // console.log("deserializedUser==>", user);
+  console.log("deserializedUser==>", user);
   done(null, user);
 });

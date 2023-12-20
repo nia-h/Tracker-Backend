@@ -2,15 +2,22 @@ const express = require("express");
 const mainRouter = express.Router();
 const medsController = require("../controllers/medsController.js");
 const userController = require("../controllers/userController");
+const jwt = require("jsonwebtoken");
 
 const checkLoggedIn = function (req, res, next) {
-  if (!req.body.token && !req.user) res.status(500).send("Sorry, you are not logged in.");
-
   if (req.body.token) {
     req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
+
     next();
   } else if (req.user) {
+    console.log("found req.user");
     next();
+  } else {
+    return next({
+      log: "checkLoggedIn Error",
+      message: "checkLoggedIn error: you need to log in first",
+      status: 400,
+    });
   }
 };
 
@@ -30,13 +37,13 @@ mainRouter.get("/", (req, res) =>
 //   }
 // );
 
-mainRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
-  const data = res.locals;
-  f;
-  res.json(data);
-});
+// mainRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
+//   const data = res.locals;
 
-mainRouter.get("/fetchSchedule", checkLoggedIn, medsController.fetchSchedule, (req, res) => {
+//   res.json(data);
+// });
+
+mainRouter.post("/fetchSchedule", checkLoggedIn, medsController.fetchSchedule, (req, res) => {
   const { schedule } = res.locals;
   res.json(schedule);
 });
@@ -49,7 +56,7 @@ mainRouter.post("/updateSchedule", checkLoggedIn, medsController.updateSchedule,
 
 mainRouter.post("/register", userController.register, medsController.createRegimen, (req, res) => {
   const data = res.locals;
-  res.json(data);
+  res.json(data); // do not really need to send it back
 });
 
 mainRouter.post("/login", userController.login, (req, res) => {

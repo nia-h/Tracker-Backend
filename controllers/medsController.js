@@ -2,16 +2,21 @@ const Axios = require("axios");
 
 const { Regimen } = require("../models/models");
 
-const { isSameDay, parseISO } = require("date-fns");
+const { isSameDay } = require("date-fns");
 
 const medsController = {};
 
 medsController.updateSchedule = async (req, res, next) => {
   const { addedCourses } = req.body;
-  const user = req.user;
+
+  let id;
+
+  if (req.apiUser) id = req.apiUser.id;
+
+  if (req.user) id = req.user.id;
 
   try {
-    let regimen = await Regimen.findOne({ userId: user.id });
+    let regimen = await Regimen.findOne({ userId: id });
     if (regimen == null) return;
 
     regimen.schedules.get(regimen.lastActiveDay).push(...addedCourses);
@@ -27,7 +32,8 @@ medsController.updateSchedule = async (req, res, next) => {
 };
 
 medsController.createRegimen = async (req, res, next) => {
-  const { _id: userId } = res.locals.user;
+  const { id: userId } = res.locals.user;
+  console.log("id cast as userId in createRegimen==>", userId);
   const today = new Date().toDateString();
 
   const data = { userId, lastActiveDay: today, schedules: new Map().set(today, []) };
@@ -50,7 +56,7 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 
   let id;
 
-  if (req.apiUser) id = req.apiUser._id;
+  if (req.apiUser) id = req.apiUser.id;
 
   if (req.user) id = req.user.id;
 
@@ -71,9 +77,8 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 };
 
 medsController.fetchSchedule = async (req, res, next) => {
-  // const userId = req.params.userId;
-  const user = req.user;
-  // console.log("user from req.user==>", user);
+  console.log("req.user in fetchSchedule middlware==>", req.user);
+  const user = req.user ? req.user : req.apiUser;
 
   try {
     const regimen = await Regimen.findOne({ userId: user.id });
