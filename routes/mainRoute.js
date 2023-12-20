@@ -18,17 +18,17 @@ mainRouter.get("/", (req, res) =>
   res.status(201).json("Hello, if you see this message that means your backend is up and running successfully.")
 );
 
-mainRouter.get(
-  "/socialUserLogin",
-  userController.socialUserLogin,
-  userController.register,
-  medsController.createRegimen,
+// mainRouter.get(
+//   "/socialUserLogin",
+//   userController.socialUserLogin,
+//   userController.register,
+//   medsController.createRegimen,
 
-  (req, res) => {
-    const data = res.locals;
-    res.json(data);
-  }
-);
+//   (req, res) => {
+//     const data = res.locals;
+//     res.json(data);
+//   }
+// );
 
 mainRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
   const data = res.locals;
@@ -36,12 +36,12 @@ mainRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
   res.json(data);
 });
 
-mainRouter.get("/fetchSchedule", medsController.fetchSchedule, (req, res) => {
+mainRouter.get("/fetchSchedule", checkLoggedIn, medsController.fetchSchedule, (req, res) => {
   const { schedule } = res.locals;
   res.json(schedule);
 });
 
-mainRouter.post("/updateSchedule", medsController.updateSchedule, (req, res) => {
+mainRouter.post("/updateSchedule", checkLoggedIn, medsController.updateSchedule, (req, res) => {
   const data = res.locals;
 
   res.json(data);

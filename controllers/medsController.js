@@ -7,14 +7,15 @@ const { isSameDay, parseISO } = require("date-fns");
 const medsController = {};
 
 medsController.updateSchedule = async (req, res, next) => {
-  const { userId, addedCourses } = req.body;
+  const { addedCourses } = req.body;
+  const user = req.user;
 
   try {
-    let regimen = await Regimen.findOne({ userId });
+    let regimen = await Regimen.findOne({ userId: user.id });
     if (regimen == null) return;
 
     regimen.schedules.get(regimen.lastActiveDay).push(...addedCourses);
-    console.log(regimen.schedules.get(regimen.lastActiveDay));
+    //console.log(regimen.schedules.get(regimen.lastActiveDay));
 
     const updatedRegiman = await regimen.save();
 
@@ -55,8 +56,6 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 
   console.log("id==>", id);
 
-  return;
-
   try {
     let regimen = await Regimen.findOne({ userId: id });
 
@@ -74,7 +73,7 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 medsController.fetchSchedule = async (req, res, next) => {
   // const userId = req.params.userId;
   const user = req.user;
-  console.log("user from req.user==>", user);
+  // console.log("user from req.user==>", user);
 
   try {
     const regimen = await Regimen.findOne({ userId: user.id });

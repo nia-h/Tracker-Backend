@@ -41,21 +41,21 @@ userController.register = async (req, res, next) => {
   }
 };
 
-userController.socialUserLogin = async (req, res, next) => {
-  // console.log("req.session.passport.user==>", req.session.passport.user);
-  return;
-  const socialId = req.params.socialId;
-  console.log("socialId==>", socialId);
-  try {
-    const user = await SocialUser.findOne({ socialId });
-    if (user) {
-      res.locals.user = user;
-    }
-    return next();
-  } catch (e) {
-    return next(e);
-  }
-};
+// userController.socialUserLogin = async (req, res, next) => {
+//   // console.log("req.session.passport.user==>", req.session.passport.user);
+//   return;
+//   const socialId = req.params.socialId;
+//   console.log("socialId==>", socialId);
+//   try {
+//     const user = await SocialUser.findOne({ socialId });
+//     if (user) {
+//       res.locals.user = user;
+//     }
+//     return next();
+//   } catch (e) {
+//     return next(e);
+//   }
+// };
 
 userController.login = async (req, res, next) => {
   const { email, password } = req.body;
