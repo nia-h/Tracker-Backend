@@ -7,10 +7,8 @@ const jwt = require("jsonwebtoken");
 const checkLoggedIn = function (req, res, next) {
   if (req.body.token) {
     req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
-
     next();
   } else if (req.user) {
-    console.log("found req.user");
     next();
   } else {
     return next({
@@ -24,24 +22,6 @@ const checkLoggedIn = function (req, res, next) {
 mainRouter.get("/", (req, res) =>
   res.status(201).json("Hello, if you see this message that means your backend is up and running successfully.")
 );
-
-// mainRouter.get(
-//   "/socialUserLogin",
-//   userController.socialUserLogin,
-//   userController.register,
-//   medsController.createRegimen,
-
-//   (req, res) => {
-//     const data = res.locals;
-//     res.json(data);
-//   }
-// );
-
-// mainRouter.post("/createRegimen", medsController.createRegimen, (req, res) => {
-//   const data = res.locals;
-
-//   res.json(data);
-// });
 
 mainRouter.post("/fetchSchedule", checkLoggedIn, medsController.fetchSchedule, (req, res) => {
   const { schedule } = res.locals;

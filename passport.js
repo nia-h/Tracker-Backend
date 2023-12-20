@@ -11,11 +11,9 @@ passport.use(
     },
 
     async function (accessToken, refreshToken, profile, done) {
-      console.log("hit verify cb");
       try {
         const existingUser = await SocialUser.findOne({ socialId: profile.id });
         if (existingUser) {
-          // console.log("exisitng User==>", existingUser);
           done(null, existingUser);
         } else {
           const newUser = await new SocialUser({
@@ -33,7 +31,6 @@ passport.use(
           let regimen = await Regimen.findOne({ userId: id });
           if (!regimen) {
             regimen = await new Regimen(data).save();
-            console.log("regimen right after creation==>", regimen);
           }
           done(null, newUser); // add regiman to cookie?
         }
@@ -50,6 +47,6 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (idInCookie, done) => {
   const user = await SocialUser.findById(idInCookie);
-  console.log("deserializedUser==>", user);
+  // console.log("deserializedUser==>", user);
   done(null, user);
 });

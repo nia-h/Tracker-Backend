@@ -4,14 +4,11 @@ const passport = require("passport");
 const CLIENT_URL = "http://localhost:5173/";
 
 router.get("/login/success", (req, res) => {
-  console.log("hit login/success");
   if (req.user) {
-    // console.log("req.user==>", req.user);
     res.status(200).json({
       success: true,
       message: "successful",
       user: req.user,
-      //   cookies: req.cookies        // or JWT
     });
   } else {
     res.json({ user: null });
@@ -19,7 +16,7 @@ router.get("/login/success", (req, res) => {
 });
 
 router.get("/login/failed", (req, res) => {
-  console.log("login failed");
+  //console.log("login failed");
   res.status(401).json({
     success: false,
     message: "failure",

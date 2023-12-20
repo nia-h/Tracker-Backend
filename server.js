@@ -15,7 +15,6 @@ const Axios = require("axios");
 const { Regimen } = require("./models/models");
 
 async function updateAll() {
-  console.log("updatAll called");
   let today = new Date().toDateString();
   let yesterday = getPreviousDay();
   try {
@@ -23,13 +22,11 @@ async function updateAll() {
     regimens.forEach(async regimen => {
       if (regimen.schedules.get(today)) return;
       let schedule = regimen.schedules.get(yesterday);
-      console.log("schedule==>", schedule);
 
       let newSchedule = schedule.map(course => {
         course.taken = false;
         return course;
       });
-      console.log("newSchedule==>", newSchedule);
       regimen.schedules.set(today, newSchedule);
       await regimen.save();
     });

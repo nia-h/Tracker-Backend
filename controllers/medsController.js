@@ -20,7 +20,6 @@ medsController.updateSchedule = async (req, res, next) => {
     if (regimen == null) return;
 
     regimen.schedules.get(regimen.lastActiveDay).push(...addedCourses);
-    //console.log(regimen.schedules.get(regimen.lastActiveDay));
 
     const updatedRegiman = await regimen.save();
 
@@ -33,7 +32,6 @@ medsController.updateSchedule = async (req, res, next) => {
 
 medsController.createRegimen = async (req, res, next) => {
   const { id: userId } = res.locals.user;
-  console.log("id cast as userId in createRegimen==>", userId);
   const today = new Date().toDateString();
 
   const data = { userId, lastActiveDay: today, schedules: new Map().set(today, []) };
@@ -42,7 +40,6 @@ medsController.createRegimen = async (req, res, next) => {
     let regimen = await Regimen.findOne({ userId });
     if (!regimen) {
       regimen = await new Regimen(data).save();
-      console.log("regimen right after creation==>", regimen);
     }
     res.locals.regimen = regimen;
     return next();
@@ -60,8 +57,6 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 
   if (req.user) id = req.user.id;
 
-  console.log("id==>", id);
-
   try {
     let regimen = await Regimen.findOne({ userId: id });
 
@@ -77,13 +72,10 @@ medsController.checkOrDeleteCourse = async (req, res, next) => {
 };
 
 medsController.fetchSchedule = async (req, res, next) => {
-  console.log("req.user in fetchSchedule middlware==>", req.user);
   const user = req.user ? req.user : req.apiUser;
 
   try {
     const regimen = await Regimen.findOne({ userId: user.id });
-
-    // let schedule = regimen.schedules.get(regimen.lastActiveDay);
 
     let today = new Date().toDateString();
 
@@ -92,7 +84,6 @@ medsController.fetchSchedule = async (req, res, next) => {
 
       await regimen.save();
     }
-    //console.log("regimen===>, " regimen)  //need testing here to see if there is a problem of "stale data"
     res.locals.schedule = regimen.schedules.get(regimen.lastActiveDay);
     return next();
   } catch (e) {
