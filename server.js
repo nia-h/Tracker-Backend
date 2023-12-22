@@ -1,4 +1,6 @@
-require("dotenv").config();
+//require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -11,10 +13,12 @@ const passportSetup = require("./passport"); //execute the code so the strategy/
 const cookieSession = require("cookie-session");
 const cron = require("node-cron");
 const Axios = require("axios");
+const { BadRequestErr } = require("./Errors/badRequestErr");
 
 const { Regimen } = require("./models/models");
 
 async function updateAll() {
+  console.log("cronjob");
   let today = new Date().toDateString();
   let yesterday = getPreviousDay();
   try {
@@ -91,21 +95,22 @@ mongoose
     console.error("Error connecting to Mongo", err);
   });
 
+//catch-all route handler
 app.use((req, res) => {
   res.sendStatus(404);
 });
 
-app.use((err, req, res, next) => {
-  const defaultErr = {
-    log: "Express error handler caught unknown middleware error",
-    status: 500,
-    message: { err: "An error occurred" },
-  };
+// app.use((err, req, res, next) => {
+//   const defaultErr = {
+//     log: "Express error handler caught unknown middleware error",
+//     status: 500,
+//     message: { err: "An error occurred" },
+//   };
 
-  const errorObj = Object.assign(defaultErr, err);
+//   const errorObj = Object.assign(defaultErr, err);
 
-  return res.status(errorObj.status).json(errorObj.message);
-});
+//   return res.status(errorObj.status).json(errorObj.message);
+// });
 
 // app.use(function (err, req, res, next) {
 //   res.status(err.status || 500);
@@ -114,6 +119,20 @@ app.use((err, req, res, next) => {
 //     error: err,
 //   });
 // });
+
+app.use((err, req, res, next) => {
+  // in prod, don't use console.log or console.err because
+  // it is not async
+  console.log("application-level error-handler called");
+  // console.error(err);
+
+  if (err instanceof BadRequestErr) {
+    res.status(400).json(err.message);
+    return;
+  }
+
+  res.status(500).json("server internal error");
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}...`);

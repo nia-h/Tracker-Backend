@@ -3,20 +3,25 @@ const mainRouter = express.Router();
 const medsController = require("../controllers/medsController.js");
 const userController = require("../controllers/userController");
 const jwt = require("jsonwebtoken");
+const { BadRequestErr } = require("../Errors/badRequestErr");
 
 const checkLoggedIn = function (req, res, next) {
-  if (req.body.token) {
-    req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
-    next();
-  } else if (req.user) {
-    next();
-  } else {
-    return next({
-      log: "checkLoggedIn Error",
-      message: "checkLoggedIn error: you need to log in first",
-      status: 400,
-    });
-  }
+  try {
+    if (req.body.token) {
+      req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
+      next();
+    } else if (req.user) {
+      next();
+    } else {
+      return next(
+        BadRequestErr.create({
+          controller: "",
+          method: "checkLoggedIn",
+          err: "User appears to be not logged in.",
+        })
+      );
+    }
+  } catch (e) {}
 };
 
 mainRouter.get("/", (req, res) =>

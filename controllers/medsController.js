@@ -4,10 +4,29 @@ const { Regimen } = require("../models/models");
 
 const { isSameDay } = require("date-fns");
 
+const { BadRequestErr } = require("../Errors/badRequestErr");
+
 const medsController = {};
+
+// const createErr = errInfo => {
+//   const { method, err } = errInfo;
+//   return {
+//     log: `medsController.${method} ERROR: ${typeof err === "object" ? JSON.stringify(err) : err}`,
+//     message: `Error occurred in medsController.${method}. Check server logs for more details.`,
+//   };
+// };
 
 medsController.updateSchedule = async (req, res, next) => {
   const { addedCourses } = req.body;
+
+  if (!addedCourses)
+    return next(
+      BadRequestErr.create({
+        controller: "medsController",
+        method: "updateSchedule",
+        err: "payload (addedCourses) appears to be missing.",
+      })
+    );
 
   let id;
 

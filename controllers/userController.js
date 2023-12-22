@@ -27,6 +27,7 @@ userController.register = async (req, res, next) => {
 
 userController.login = async (req, res, next) => {
   const { email, password } = req.body;
+  console.log("email==>", email);
 
   try {
     const user = await User.findOne({ email });
