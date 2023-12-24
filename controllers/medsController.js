@@ -36,7 +36,14 @@ medsController.updateSchedule = async (req, res, next) => {
 
   try {
     let regimen = await Regimen.findOne({ userId: id });
-    if (regimen == null) return;
+    if (!regimen)
+      return next(
+        BadRequestErr.create({
+          controller: "medsController",
+          method: "updateSchedule",
+          err: "We conuldn't found your record(regimen)",
+        })
+      );
 
     regimen.schedules.get(regimen.lastActiveDay).push(...addedCourses);
 
@@ -45,7 +52,8 @@ medsController.updateSchedule = async (req, res, next) => {
     res.locals = updatedRegiman.schedules.get(regimen.lastActiveDay);
     return next();
   } catch (error) {
-    console.log(error);
+    console.eror(error);
+    return next(error);
   }
 };
 

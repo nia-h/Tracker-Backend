@@ -127,11 +127,11 @@ app.use((err, req, res, next) => {
   // console.error(err);
 
   if (err instanceof BadRequestErr) {
-    res.status(400).json(err.message);
+    res.status(400).send(err.message);
     return;
   }
 
-  res.status(500).json("server internal error");
+  res.status(500).send("server internal error, check server log for detail");
 });
 
 app.listen(PORT, () => {

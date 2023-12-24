@@ -8,6 +8,7 @@ const { BadRequestErr } = require("../Errors/badRequestErr");
 const checkLoggedIn = function (req, res, next) {
   try {
     if (req.body.token) {
+      //  (Synchronous) If a callback is not supplied, function acts synchronously. Returns the payload decoded if the signature is valid and optional expiration, audience, or issuer are valid. If not, it will throw the error.
       req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
       next();
     } else if (req.user) {
@@ -21,7 +22,10 @@ const checkLoggedIn = function (req, res, next) {
         })
       );
     }
-  } catch (e) {}
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
 };
 
 mainRouter.get("/", (req, res) =>
