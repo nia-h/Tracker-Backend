@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const passport = require("passport");
 
-const CLIENT_URL = "http://localhost:5173/";
+const CLIENT_URL = "http://localhost:5173";
 
 router.get("/login/success", (req, res) => {
   if (req.user) {
@@ -16,7 +16,7 @@ router.get("/login/success", (req, res) => {
 });
 
 router.get("/login/failed", (req, res) => {
-  //console.log("login failed");
+  console.log("login failed");
   res.status(401).json({
     success: false,
     message: "failure",
@@ -30,6 +30,10 @@ router.get("/logout", (req, res, next) => {
       return next(err);
     }
   }); // this method is from passport
+  res.redirect(CLIENT_URL);
+});
+
+router.get("//githubRedirect", (req, res, next) => {
   res.redirect(CLIENT_URL);
 });
 
