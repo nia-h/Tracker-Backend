@@ -33,7 +33,7 @@ router.get("/logout", (req, res, next) => {
   res.redirect(CLIENT_URL);
 });
 
-router.get("//githubRedirect", (req, res, next) => {
+router.get("/githubRedirect", (req, res, next) => {
   res.redirect(CLIENT_URL);
 });
 
