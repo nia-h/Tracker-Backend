@@ -25,12 +25,13 @@ router.get("/login/failed", (req, res) => {
 
 router.get("/logout", (req, res, next) => {
   req.logout(err => {
+    // this method (.logout) is from passport
     if (err) {
       console.log("logout err==>", err);
       return next(err);
     }
-  }); // this method is from passport
-  res.redirect(CLIENT_URL);
+  });
+  res.status(200).json("logout complete");
 });
 
 router.get("/githubRedirect", (req, res, next) => {
