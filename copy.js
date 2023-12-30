@@ -1,4 +1,5 @@
 //require("dotenv").config();
+require("https").globalAgent.options.rejectUnauthorized = false;
 const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
@@ -12,7 +13,6 @@ const passport = require("passport");
 const passportSetup = require("./passport"); //execute the code so the strategy/setup is associated with the passport object;
 const cookieSession = require("cookie-session");
 const cron = require("node-cron");
-const Axios = require("axios");
 const { BadRequestErr } = require("./Errors/badRequestErr");
 
 const { Regimen } = require("./models/models");
@@ -45,17 +45,34 @@ const cronJob = cron.schedule("0 0 0 * * *", updateAll, {
 });
 cronJob.start();
 
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(
   cookieSession({
     name: "MTsession",
-    sameSite: "none",
     secure: true,
-    keys: ["medsTraker"],
+    sameSite: "none",
+    keys: ["medsTraker"], //keys are for encryption
     maxAge: 24 * 60 * 60 * 1000,
   })
-); //keys are for encryption
+);
+
+app.use((req, res, next) => {
+  if (req["sessionCookies"]) {
+    req["sessionCookies"].secure = true;
+  }
+
+  next();
+});
 
 app.use(function (request, response, next) {
   // This is a walkaround see below post
@@ -76,14 +93,6 @@ app.use(function (request, response, next) {
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(
-  cors({
-    origin: "http://192.168.2.101:5173",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
 
 app.use("/", mainRoute);
 
@@ -132,14 +141,14 @@ app.use((err, req, res, next) => {
   // in prod, don't use console.log or console.err because
   // it is not async
   console.log("application-level error-handler called");
-  console.error(err);
+  // console.error(err);
 
   if (err instanceof BadRequestErr) {
     res.status(400).send(err.message);
     return;
   }
 
-  res.status(500).send("server internal error, check server log for detail");
+  res.status(500).send(`server internal error: ${err}`);
 });
 
 app.listen(PORT, () => {
