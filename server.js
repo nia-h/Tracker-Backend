@@ -18,6 +18,7 @@ const { BadRequestErr } = require("./Errors/badRequestErr");
 const { Regimen } = require("./models/models");
 
 async function updateAll() {
+  // refactor to account for yesterday notfound (error)
   console.log("cronjob");
   let today = new Date().toDateString();
   let yesterday = getPreviousDay();
@@ -39,7 +40,7 @@ async function updateAll() {
   }
 }
 
-const cronJob = cron.schedule("0 0 0 * * *", updateAll, {
+const cronJob = cron.schedule("0 01 05 * * *", updateAll, {
   scheduled: false,
   timezone: "Asia/Shanghai",
 });
@@ -50,8 +51,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   cookieSession({
     name: "MTsession",
-    sameSite: "none",
-    secure: true,
+    // sameSite: "none",
+    // secure: true,
     keys: ["medsTraker"],
     maxAge: 24 * 60 * 60 * 1000,
   })
@@ -79,7 +80,7 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: "http://192.168.2.101:5173",
+    origin: process.env.CLIENT_URL,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })

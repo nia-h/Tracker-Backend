@@ -9,7 +9,7 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: "/auth/github/callback",
     },
-
+    //this is the verify function that will be envoked when GitHub returns user info (profile)
     async function (accessToken, refreshToken, profile, done) {
       try {
         const existingUser = await SocialUser.findOne({ socialId: profile.id });
@@ -41,12 +41,19 @@ passport.use(
   )
 );
 
+// If sessions are being utilized, applications must set up Passport with
+//          * functions to serialize a user into and out of a session.  For example, a
+//          * common pattern is to serialize just the user ID into the session (due to the
+//          * fact that it is desirable to store the minimum amount of data in a session).
+//          * When a subsequent request arrives for the session, the full User object can
+//          * be loaded from the database by ID.
+
 passport.serializeUser((user, done) => {
   done(null, user.id); //store id in cookie  (.id is a virtual getter provided by mongoose)
 });
 
 passport.deserializeUser(async (idInCookie, done) => {
   const user = await SocialUser.findById(idInCookie);
-  console.log("deserializedUser==>", user);
+  // console.log("deserializedUser==>", user);
   done(null, user);
 });
