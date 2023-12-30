@@ -82,36 +82,36 @@ router.post("/logout", async (req, res, next) => {
 //   * Note that if a callback is supplied, it becomes the application's
 //   * responsibility to log-in the user, establish a session, and otherwise perform
 //   * the desired operations.
-// router.get(
-//   "/github/callback",
-//   passport.authenticate("github", {
-//     successRedirect: CLIENT_URL,
-//     failureRedirect: "/login/failed",
-//   })
-// );
+router.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    successRedirect: process.env.CLIENT_URL,
+    failureRedirect: "/login/failed",
+  })
+);
 
-router.get("/github/callback", (req, res, next) => {
-  passport.authenticate("github", function (err, user, info, status) {
-    console.log("err==>", err);
-    console.log("user==>", user);
-    console.log("info==>", info);
-    console.log("status==>", status);
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.redirect("/dfdfjdkfjdfjdkjf");
-    }
-    req.logIn(user, function (err) {
-      if (err) {
-        return next(err);
-      }
-      //If Successful
-      // return res.status(302).json({ redirectUrl: "/" });
-      return res.status(302).redirect(process.env.CLIENT_URL);
-    });
-    // res.redirect(CLIENT_URL);
-  })(req, res, next);
-});
+// router.get("/github/callback", (req, res, next) => {
+//   passport.authenticate("github", function (err, user, info, status) {
+//     console.log("err==>", err);
+//     console.log("user==>", user);
+//     console.log("info==>", info);
+//     console.log("status==>", status);
+//     if (err) {
+//       return next(err);
+//     }
+//     if (!user) {
+//       return res.redirect("/dfdfjdkfjdfjdkjf");
+//     }
+//     req.logIn(user, function (err) {
+//       if (err) {
+//         return next(err);
+//       }
+//       //If Successful
+//       // return res.status(302).json({ redirectUrl: "/" });
+//       return res.status(302).redirect(process.env.CLIENT_URL);
+//     });
+//     // res.redirect(CLIENT_URL);
+//   })(req, res, next);
+// });
 
 module.exports = router;

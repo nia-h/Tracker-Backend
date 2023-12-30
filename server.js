@@ -51,8 +51,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   cookieSession({
     name: "MTsession",
-    // sameSite: "none",
-    // secure: true,
+    sameSite: "none",
+    secure: true,
     keys: ["medsTraker"],
     maxAge: 24 * 60 * 60 * 1000,
   })
